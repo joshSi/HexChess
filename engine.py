@@ -8,18 +8,31 @@ run = True
 def draw_game():
     win = pygame.display.set_mode((456, 352))
     win.fill((0,0,0))
-    HexMap.draw_map(win, 28, 128)
+    hexboard = HexBoard()
+    hexboard.draw_board(win, 28, 128)
     pygame.display.update()
 
-class HexMap:
+class HexBoard:
 
-    def draw_map(Surface, off_x, off_y):
+    def __init__(self, red = 255, green = 248, blue = 220):
+        self.r = red
+        self.g = green
+        self.b = blue
+
+    def draw_board(self, Surface, off_x, off_y):
         for i, col in enumerate(board):
+            col_size = len(col)
             for j, piece in enumerate(col):
-                HexMap.draw_hex(Surface, i*40+off_x, j*32+off_y-len(col)*16+64)
+                draw_hex(Surface, i*40+off_x, j*32+off_y-col_size*16+64, \
+                    (self.r-14*((col_size+j)%3), self.g-45*((col_size+j)%3), self.b-49*((col_size+j)%3)))
+                color = 25+i%2*195
+                draw_piece(Surface, i*40+off_x, j*32+off_y-col_size*16+64, (color-20, color, color))
 
-    def draw_hex(Surface, x, y):
-        pygame.draw.polygon(Surface, (255,255,255), [(x-28,y),(x-12,y+16),(x+12,y+16),(x+28,y),(x+12,y-16),(x-12,y-16)], 1)
+def draw_hex(Surface, x, y, rgb):
+    pygame.draw.polygon(Surface, rgb, [(x-28,y),(x-12,y+16),(x+12,y+16),(x+28,y),(x+12,y-16),(x-12,y-16)], 0)
+
+def draw_piece(Surface, x, y, rgb):
+    pygame.draw.circle(Surface, rgb, (x, y), 7)
 
 while run:
     pygame.time.delay(1)
